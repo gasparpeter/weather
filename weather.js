@@ -2,9 +2,13 @@
 window.addEventListener("load", ()=> {
     let long;
     let lat;
-    let temperatureDescription = document.querySelector('.temperature-description');
-    let temperatureDegree = document.querySelector('.temperature-degree');
-    let locationTimezone = document.querySelector('.location-timezone');
+    let temperatureDescription = document.querySelector(
+        '.temperature-description'
+    );
+    let temperatureDegree = document.querySelector(".temperature-degree");
+    let locationTimezone = document.querySelector(".location-timezone");
+    let temperatureSection = document.querySelector(".temperature");
+    const temperatureSpan = document.querySelector(".temperature span");
 
     if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(position => {
@@ -12,20 +16,27 @@ window.addEventListener("load", ()=> {
             lat = position.coords.latitude;
 
             const proxy = "https://cors-anywhere.herokuapp.com/";
-            const api = `${proxy}https://api.darksky.net/forecast/fd9d9c6418c23d94745b836767721ad1/${lat},${long}`;
+            const api = `${proxy}https://api.darksky.net/forecast/fb03bd0ee7b97fc7f33117b51c829475/${lat},${long}`;
             fetch(api)
                 .then(response => {
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
-                    const {temperature, summary, icon}= data.currently;
+                    const {temperature, summary, icon} = data.currently;
 
                     temperatureDegree.textContent = temperature;
                     temperatureDescription.textContent = summary;
                     locationTimezone.textContent = data.timeZone;
 
-                    setIcons(icon, document.querySelector('.icon'));
+                    setIcons(icon, document.querySelector(".icon"));
+
+                    temperatureSection.addEventListener("click",() => {
+                        if (temperatureSpan.textContent === "F") {
+                            temperatureSpan.textContent = "C";
+                        }else {
+                            temperatureSpan.textContent = "F";
+                        }
+                    });
                 });
         });
     }
@@ -36,5 +47,4 @@ window.addEventListener("load", ()=> {
         skycons.play();
         return skycons.set(iconID, Skycons[currentIcon]);
     }
-
     });
